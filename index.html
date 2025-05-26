@@ -4,60 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prototipe Peta Bahaya</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Gaya untuk menyembunyikan/menampilkan view */
-        .view {
-            display: none;
-        }
-        .view.active {
-            display: block;
-        }
-        #map-view-container, #map-route-container {
-            height: 400px; /* Atur tinggi peta */
-            width: 100%;
-            border-radius: 0.5rem;
-            margin-top: 1rem;
-            background-color: #e9e9e9; /* Warna placeholder jika peta tidak termuat */
-        }
-        /* Pastikan font Inter digunakan jika tersedia */
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-    </style>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=MASUKKAN_API_KEY_GOOGLE_MAPS_ANDA_DISINI&callback=initApp&libraries=marker,geometry"></script>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+     
+    <link rel="stylesheet" href="style.css">
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
 </head>
 <body class="bg-gray-100 text-gray-800 antialiased">
     <div class="container mx-auto p-4 sm:p-6 md:p-8 max-w-3xl">
         <header class="mb-8 text-center">
-            <h1 class="text-3xl sm:text-4xl font-bold text-red-600">Tung Tung Peta Bahaya</h1>
+            <h1 class="text-3xl sm:text-4xl font-bold text-red-600">Peta Bahaya Kita </h1>
+            <p class="text-gray-600 mt-2">Laporkan bahaya, lihat peta, dan temukan rute (prototipe).</p>
         </header>
 
         <nav id="main-nav" class="mb-8 p-4 bg-white rounded-lg shadow-md">
             <div class="flex flex-col sm:flex-row justify-around space-y-2 sm:space-y-0 sm:space-x-2">
                 <button onclick="showView('home-view')" class="nav-button bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg w-full sm:w-auto transition duration-150 ease-in-out">Beranda</button>
                 <button onclick="showView('add-danger-view')" class="nav-button bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg w-full sm:w-auto transition duration-150 ease-in-out">Tambah Bahaya</button>
-                <button onclick="showView('view-map-view'); initMapView();" class="nav-button bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg w-full sm:w-auto transition duration-150 ease-in-out">Lihat Peta</button>
-                <button onclick="showView('find-route-view'); initRouteMapView();" class="nav-button bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg w-full sm:w-auto transition duration-150 ease-in-out">Cari Rute Aman</button>
+                <button onclick="showView('view-map-view'); initMapViewIfNeeded();" class="nav-button bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg w-full sm:w-auto transition duration-150 ease-in-out">Lihat Peta</button>
+                <button onclick="showView('find-route-view'); initRouteMapViewIfNeeded();" class="nav-button bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg w-full sm:w-auto transition duration-150 ease-in-out">Cari Rute</button>
             </div>
         </nav>
 
         <div id="home-view" class="view active p-6 bg-white rounded-lg shadow-md">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-0">
-                <div class="bg-green-100 p-4 rounded-lg shadow hover:shadow-lg transition-shadow duration-200">
+                <div class="bg-green-100 p-6 rounded-lg shadow hover:shadow-lg transition-shadow duration-200">
                     <h3 class="text-xl font-semibold text-green-700 mb-2">➕ Tambahkan Lokasi Bahaya</h3>
-                    <p class="text-green-600 mb-4">Laporkan lokasi dan jenis bahaya yang Anda temui untuk membantu pengguna lain.</p>
-                    <button onclick="showView('add-danger-view')" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-150 ease-in-out">Mulai Melaporkan</button>
+                    <p class="text-green-600 mb-4">Laporkan lokasi dan jenis bahaya.</p>
+                    <button onclick="showView('add-danger-view')" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg">Mulai Melaporkan</button>
                 </div>
                 <div class="bg-yellow-100 p-6 rounded-lg shadow hover:shadow-lg transition-shadow duration-200">
                     <h3 class="text-xl font-semibold text-yellow-700 mb-2">🗺️ Lihat Peta Bahaya</h3>
-                    <p class="text-yellow-600 mb-4">Lihat sebaran lokasi berbahaya yang telah dilaporkan oleh komunitas.</p>
-                    <button onclick="showView('view-map-view'); initMapView();" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-150 ease-in-out">Lihat Peta Sekarang</button>
+                    <p class="text-yellow-600 mb-4">Lihat sebaran lokasi berbahaya.</p>
+                    <button onclick="showView('view-map-view'); initMapViewIfNeeded();" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg">Lihat Peta Sekarang</button>
                 </div>
                 <div class="bg-purple-100 p-6 rounded-lg shadow hover:shadow-lg transition-shadow duration-200">
-                    <h3 class="text-xl font-semibold text-purple-700 mb-2">🚶‍♂️ Cari Rute Aman</h3>
-                    <p class="text-purple-600 mb-4">Masukkan titik awal dan tujuan untuk melihat rekomendasi rute (fitur disederhanakan).</p>
-                    <button onclick="showView('find-route-view'); initRouteMapView();" class="w-full bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-150 ease-in-out">Cari Rute</button>
+                    <h3 class="text-xl font-semibold text-purple-700 mb-2">🚶‍♂️ Cari Rute</h3>
+                    <p class="text-purple-600 mb-4">Masukkan titik awal dan tujuan.</p>
+                    <button onclick="showView('find-route-view'); initRouteMapViewIfNeeded();" class="w-full bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg">Cari Rute</button>
                 </div>
             </div>
         </div>
@@ -83,9 +74,9 @@
                 </div>
                 <div class="mb-6">
                     <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Deskripsi Tambahan (Opsional):</label>
-                    <textarea id="description" name="description" rows="3" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Contoh: Jalan berlubang, rawan begal malam hari"></textarea>
+                    <textarea id="description" name="description" rows="3" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Contoh: Jalan berlubang"></textarea>
                 </div>
-                <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-150 ease-in-out">Kirim Laporan</button>
+                <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg">Kirim Laporan</button>
             </form>
             <div id="add-danger-message" class="mt-4 text-center"></div>
         </div>
@@ -97,7 +88,7 @@
         </div>
 
         <div id="find-route-view" class="view p-6 bg-white rounded-lg shadow-md">
-            <h2 class="text-2xl font-semibold mb-4 text-gray-700">Temukan Rute Teraman (Prototipe)</h2>
+            <h2 class="text-2xl font-semibold mb-4 text-gray-700">Temukan Rute (Titik Awal & Akhir)</h2>
             <form id="find-route-form">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                     <div>
@@ -119,297 +110,18 @@
                         <input type="number" step="any" id="end-longitude" name="end-longitude" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="106.827153" required>
                     </div>
                 </div>
-                <button type="submit" class="w-full bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-150 ease-in-out">Tampilkan Titik di Peta</button>
+                <button type="submit" class="w-full bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg">Tampilkan Titik di Peta</button>
             </form>
             <div id="map-route-container" class="mt-6"></div>
-            <p class="mt-2 text-xs text-gray-500 text-center">Prototipe ini hanya akan menampilkan titik awal & akhir. Rute aman sebenarnya memerlukan backend.</p>
+            <p class="mt-2 text-xs text-gray-500 text-center">Prototipe ini hanya menampilkan titik awal & akhir.</p>
             <div id="find-route-message" class="mt-4 text-center"></div>
         </div>
 
         <footer class="mt-12 text-center text-sm text-gray-500">
-            <p>&copy; 2025 Prototipe Peta Bahaya Kita. Dibuat untuk tujuan demonstrasi.</p>
+            <p>© Tung Tung Tung Tegraf.</p>
         </footer>
     </div>
 
-    <script>
-        // Variabel global untuk peta
-        let mapViewMap;
-        let routeViewMap;
-        let markers = []; // Untuk menyimpan semua marker di peta utama
-        let routeMarkers = []; // Untuk menyimpan marker di peta rute
-
-        // Data bahaya awal (dummy)
-        const initialDummyDangers = [
-            { id: 'dummy1', lat: -6.200000, lng: 106.816666, level: 'Tinggi', description: 'Sering terjadi penjambretan malam hari di sekitar Dukuh Atas.' },
-            { id: 'dummy2', lat: -6.214620, lng: 106.845130, level: 'Sedang', description: 'Jalan rusak dan minim penerangan di area Manggarai.' },
-            { id: 'dummy3', lat: -6.175392, lng: 106.827153, level: 'Rendah', description: 'Genangan air saat hujan deras dekat Monas.' }
-        ];
-
-        // Fungsi untuk menampilkan view tertentu dan menyembunyikan yang lain
-        function showView(viewId) {
-            document.querySelectorAll('.view').forEach(view => {
-                view.classList.remove('active');
-            });
-            document.getElementById(viewId).classList.add('active');
-            
-            // Update tombol navigasi aktif
-            document.querySelectorAll('.nav-button').forEach(button => {
-                button.classList.remove('ring-2', 'ring-offset-2', 'ring-blue-400'); // Hapus style aktif
-                if (button.getAttribute('onclick').includes(viewId)) {
-                    button.classList.add('ring-2', 'ring-offset-2', 'ring-blue-400'); // Tambah style aktif
-                }
-            });
-        }
-
-        // Fungsi untuk mendapatkan data bahaya dari localStorage
-        function getDangerData() {
-            const storedData = localStorage.getItem('dangerReports');
-            let data = storedData ? JSON.parse(storedData) : [];
-            // Gabungkan dengan data dummy awal jika localStorage kosong atau untuk memastikan data dummy selalu ada
-            // Ini bisa diatur agar data dummy hanya muncul jika localStorage kosong
-            const allDataIds = new Set(data.map(d => d.id));
-            const uniqueInitialDangers = initialDummyDangers.filter(d => !allDataIds.has(d.id));
-            return [...data, ...uniqueInitialDangers];
-        }
-
-        // Fungsi untuk menyimpan data bahaya ke localStorage
-        function saveDangerData(data) {
-            localStorage.setItem('dangerReports', JSON.stringify(data));
-        }
-
-        // Inisialisasi aplikasi (dipanggil oleh callback Google Maps API)
-        function initApp() {
-            // Tampilkan view beranda secara default
-            showView('home-view');
-
-            // Setup event listener untuk form tambah bahaya
-            const addDangerForm = document.getElementById('add-danger-form');
-            addDangerForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                const lat = parseFloat(document.getElementById('latitude').value);
-                const lng = parseFloat(document.getElementById('longitude').value);
-                const level = document.getElementById('danger-level').value;
-                const description = document.getElementById('description').value;
-                const messageDiv = document.getElementById('add-danger-message');
-
-                if (isNaN(lat) || isNaN(lng)) {
-                    messageDiv.textContent = 'Koordinat tidak valid!';
-                    messageDiv.className = 'mt-4 text-center text-red-600';
-                    return;
-                }
-
-                const newDanger = {
-                    id: 'user_' + Date.now(), // ID unik sederhana
-                    lat: lat,
-                    lng: lng,
-                    level: level,
-                    description: description
-                };
-
-                const currentData = getDangerData().filter(d => !initialDummyDangers.find(id => id.id === d.id)); // Ambil data user saja
-                currentData.push(newDanger);
-                saveDangerData(currentData); // Simpan hanya data yang ditambahkan pengguna
-
-                messageDiv.textContent = 'Laporan bahaya berhasil ditambahkan!';
-                messageDiv.className = 'mt-4 text-center text-green-600';
-                addDangerForm.reset();
-
-                // Refresh peta jika sedang ditampilkan
-                if (document.getElementById('view-map-view').classList.contains('active') && mapViewMap) {
-                    initMapView(); // Re-initialize untuk menampilkan data baru
-                }
-                
-                setTimeout(() => {
-                    messageDiv.textContent = '';
-                    showView('view-map-view'); // Pindah ke lihat peta setelah berhasil
-                    initMapView();
-                }, 2000);
-            });
-
-            // Setup event listener untuk form cari rute
-            const findRouteForm = document.getElementById('find-route-form');
-            findRouteForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                const startLat = parseFloat(document.getElementById('start-latitude').value);
-                const startLng = parseFloat(document.getElementById('start-longitude').value);
-                const endLat = parseFloat(document.getElementById('end-latitude').value);
-                const endLng = parseFloat(document.getElementById('end-longitude').value);
-                const messageDiv = document.getElementById('find-route-message');
-
-                if (isNaN(startLat) || isNaN(startLng) || isNaN(endLat) || isNaN(endLng)) {
-                    messageDiv.textContent = 'Koordinat awal atau tujuan tidak valid!';
-                    messageDiv.className = 'mt-4 text-center text-red-600';
-                    return;
-                }
-                messageDiv.textContent = '';
-                displayRoutePoints(startLat, startLng, endLat, endLng);
-            });
-        }
-
-        // Fungsi untuk inisialisasi peta di view "Lihat Peta Bahaya"
-        function initMapView() {
-            if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
-                console.error("Google Maps API tidak termuat.");
-                document.getElementById('map-view-container').innerHTML = '<p class="text-red-500 text-center p-4">Gagal memuat peta. Pastikan API Key Google Maps Anda benar dan koneksi internet stabil.</p>';
-                return;
-            }
-
-            // Hapus marker lama
-            markers.forEach(marker => marker.setMap(null));
-            markers = [];
-
-            // Default Jakarta
-            const defaultCenter = { lat: -6.2088, lng: 106.8456 };
-            mapViewMap = new google.maps.Map(document.getElementById('map-view-container'), {
-                center: defaultCenter,
-                zoom: 11,
-                mapTypeControl: false,
-                streetViewControl: false,
-            });
-
-            const dangerData = getDangerData();
-            const bounds = new google.maps.LatLngBounds();
-            let hasMarkers = false;
-
-            dangerData.forEach(danger => {
-                const position = { lat: danger.lat, lng: danger.lng };
-                let iconUrl;
-                switch (danger.level.toLowerCase()) {
-                    case 'tinggi':
-                        iconUrl = 'https://maps.google.com/mapfiles/ms/icons/red-dot.png';
-                        break;
-                    case 'sedang':
-                        iconUrl = 'https://maps.google.com/mapfiles/ms/icons/yellow-dot.png';
-                        break;
-                    case 'rendah':
-                    default:
-                        iconUrl = 'https://maps.google.com/mapfiles/ms/icons/green-dot.png';
-                        break;
-                }
-
-                const marker = new google.maps.Marker({
-                    position: position,
-                    map: mapViewMap,
-                    title: `Level: ${danger.level}\nDeskripsi: ${danger.description || 'Tidak ada deskripsi'}`,
-                    icon: {
-                        url: iconUrl,
-                        scaledSize: new google.maps.Size(32, 32) // Ukuran ikon
-                    }
-                });
-
-                const infowindow = new google.maps.InfoWindow({
-                    content: `
-                        <div class="p-2">
-                            <h4 class="font-bold text-md">${danger.level}</h4>
-                            <p class="text-sm">${danger.description || 'Tidak ada deskripsi.'}</p>
-                            <p class="text-xs text-gray-500">Lat: ${danger.lat.toFixed(6)}, Lng: ${danger.lng.toFixed(6)}</p>
-                        </div>
-                    `
-                });
-
-                marker.addListener('click', () => {
-                    infowindow.open({
-                        anchor: marker,
-                        map: mapViewMap,
-                    });
-                });
-                markers.push(marker);
-                bounds.extend(position);
-                hasMarkers = true;
-            });
-            
-            if (hasMarkers) {
-                mapViewMap.fitBounds(bounds);
-                // Hindari zoom terlalu dekat jika hanya ada satu marker
-                if (dangerData.length === 1) {
-                    mapViewMap.setZoom(15);
-                }
-            } else {
-                 mapViewMap.setCenter(defaultCenter);
-                 mapViewMap.setZoom(11);
-            }
-        }
-        
-        // Fungsi untuk inisialisasi peta di view "Cari Rute Aman"
-        function initRouteMapView() {
-             if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
-                console.error("Google Maps API tidak termuat.");
-                document.getElementById('map-route-container').innerHTML = '<p class="text-red-500 text-center p-4">Gagal memuat peta. Pastikan API Key Google Maps Anda benar dan koneksi internet stabil.</p>';
-                return;
-            }
-            // Default Jakarta
-            const defaultCenter = { lat: -6.2088, lng: 106.8456 };
-            routeViewMap = new google.maps.Map(document.getElementById('map-route-container'), {
-                center: defaultCenter,
-                zoom: 11,
-                mapTypeControl: false,
-                streetViewControl: false,
-            });
-            // Hapus marker lama jika ada
-            routeMarkers.forEach(marker => marker.setMap(null));
-            routeMarkers = [];
-        }
-
-        // Fungsi untuk menampilkan titik awal dan akhir di peta rute
-        function displayRoutePoints(startLat, startLng, endLat, endLng) {
-            if (!routeViewMap) {
-                initRouteMapView(); // Pastikan peta sudah diinisialisasi
-            }
-            if (!routeViewMap) return; // Jika masih gagal inisialisasi, keluar
-
-            // Hapus marker lama
-            routeMarkers.forEach(marker => marker.setMap(null));
-            routeMarkers = [];
-
-            const startPos = { lat: startLat, lng: startLng };
-            const endPos = { lat: endLat, lng: endLng };
-
-            const startMarker = new google.maps.Marker({
-                position: startPos,
-                map: routeViewMap,
-                label: { text: "A", color: "white" },
-                title: "Titik Awal"
-            });
-            routeMarkers.push(startMarker);
-
-            const endMarker = new google.maps.Marker({
-                position: endPos,
-                map: routeViewMap,
-                label: { text: "B", color: "white" },
-                title: "Titik Tujuan"
-            });
-            routeMarkers.push(endMarker);
-
-            const bounds = new google.maps.LatLngBounds();
-            bounds.extend(startPos);
-            bounds.extend(endPos);
-            routeViewMap.fitBounds(bounds);
-
-            // Sederhananya, kita tidak menampilkan rute di prototipe ini.
-            // Untuk menampilkan rute, Anda perlu menggunakan DirectionsService.
-            // Contoh:
-            // const directionsService = new google.maps.DirectionsService();
-            // const directionsRenderer = new google.maps.DirectionsRenderer();
-            // directionsRenderer.setMap(routeViewMap);
-            // directionsService.route({
-            //     origin: startPos,
-            //     destination: endPos,
-            //     travelMode: 'DRIVING' // atau WALKING, BICYCLING
-            // }, (response, status) => {
-            //     if (status === 'OK') {
-            //         directionsRenderer.setDirections(response);
-            //     } else {
-            //         window.alert('Permintaan rute gagal: ' + status);
-            //     }
-            // });
-             document.getElementById('find-route-message').textContent = 'Titik awal dan akhir ditampilkan di peta. Fitur rute aman penuh memerlukan pengembangan lebih lanjut.';
-             document.getElementById('find-route-message').className = 'mt-4 text-center text-blue-600';
-        }
-
-        // Panggil initApp saat DOM siap jika Google Maps API sudah termuat (jika tidak pakai callback)
-        // Namun karena kita pakai callback=initApp di URL API, ini tidak perlu.
-        // document.addEventListener('DOMContentLoaded', initApp);
-
-    </script>
+    <script src="app.js" defer></script>
 </body>
 </html>
