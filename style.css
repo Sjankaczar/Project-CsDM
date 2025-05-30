@@ -1,4 +1,3 @@
-/* Gaya untuk menyembunyikan/menampilkan view */
 .view {
     display: none;
 }
@@ -6,23 +5,20 @@
     display: block;
 }
 
-/* Container untuk peta */
 #map-view-container, 
 #map-route-container {
-    height: 450px; /* Atur tinggi peta */
+    height: 450px; 
     width: 100%;
-    border-radius: 0.5rem; /* Tailwind: rounded-lg */
-    margin-top: 1rem; /* Tailwind: mt-4 */
-    background-color: #e9e9e9; /* Warna placeholder jika peta tidak termuat */
+    border-radius: 0.5rem; 
+    margin-top: 1rem; 
+    background-color: #e9e9e9; 
 }
 
-/* Font default untuk body */
+
 body {
-    font-family: 'Inter', sans-serif; /* Menggunakan Inter jika tersedia, fallback ke sans-serif */
+    font-family: 'Inter', sans-serif; 
 }
 
-/* Mengatur ukuran default ikon Leaflet agar tidak terlalu besar */
-/* Penting: Gunakan !important dengan hati-hati, hanya jika benar-benar diperlukan untuk override */
 .leaflet-marker-icon {
     width: 25px !important;
     height: 41px !important;
